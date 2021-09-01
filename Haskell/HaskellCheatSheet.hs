@@ -396,7 +396,104 @@ dotProduct (a, b) (c, d) = (a * c) + (b * d)
 -- ----------------------------------------------------------------------------------------------------------------------------------------
 
 -- Function Syntax in Haskell
--- https://www.youtube.com/watch?v=vuT8ts_neZw&list=PLS6urCrsYES24Fwzg5-Uga1QEbNm9kiU_&index=8
+{-
+	- The "=>" symbol means it takes in the following parameters
+	- The "->" symbol represents the return type  
+-}
+
+-- This is a recursive function that checks if a list is in increasing order 
+increasing1 :: (Ord a) => [a] -> Bool
+increasing1 xs = if xs == []
+  then True
+  else if tail xs == []
+    then True
+    else if head xs <= head (tail xs)
+      then increasing1 (tail xs)
+      else False
+
+-- This is the same as the previous function but uses Haskell's pattern matching
+increasing2 :: (Ord a) => [a] -> Bool
+increasing2 [] = True -- Empty list is increasing
+increasing2 [x] = True -- One item is increasing
+increasing2 (x : y : ys) = x <= y && increasing2 (y : ys)
+{-
+	x - 1st number
+	y - 2nd number
+	ys - rest of the list
+	The list is increasing if the first number is less than the second number and then it recursively checks continously
+-} 
+
+-- Takes a string and returns a string with no vowels
+noVowels1 :: [Char] -> [Char]
+noVowels1 word = if word == ""
+  then ""
+  else if head word `elem` "aeiouAEIOU"
+    then noVowels1 (tail word)
+    else (head word) : noVowels1 (tail word)
+
+-- Same as previous noVowels but using pattern matching and guards
+noVowels2 :: [Char] -> [Char]
+noVowels2 "" = ""
+noVowels2 (x : xs)
+  | x `elem` "aeiouAEIOU" = noVowels2 xs
+  | otherwise = x : noVowels2 xs
+
+-- This function calls out an alert at a certain time
+watch1 :: Int -> [Char]
+watch1 n = if n == 7
+  then "7 o'clock and ... SHARKNADO!"
+  else show n ++ " o'clock and all is well."
+-- show is kind of like a print statement 
+
+-- Same as watch1 but with pattern matching
+watch2 :: Int -> [Char]
+watch2 n = show n ++ " o'clock and " ++ message n
+  where message 7 = "... SHARKNADO!"
+        message _ = "all is well" -- Note: with where statements, the message needs to be spaced on same line
+
+-- Same as watch2 but with case statements (Switch statement)
+watch3 :: Int -> [Char]
+watch3 n = show n ++ " o'clock and " ++ case n of 7 -> "... SHARKNADO!"
+                                                  _ -> "all is well."
+
+-- Function that calculates the acceleration due to gravity
+gravity1 :: (Fractional a) => a -> a 
+gravity1 r = 6.674e-11 * 5.972e24 / (r ^ 2) --Haskell can handle exponential numbers
+
+-- Same as gravity1 but uses a "let" expression
+gravity2 :: (Fractional a) => a -> a 
+gravity2 r = let g = 6.674e-11
+                 earthMass = 5.972e24 -- Can chain and add more variables after the let statement
+             in g * earthMass / (r ^ 2)
+
+-- Some Templates
+{-
+	- Definition (Should be exhaustive. Good idea to have last pattern match everything):
+		pattern = result
+		...
+
+	- Guard expression (otherwise is not required but good to be exhaustive):
+	  pattern
+	    | expression = result
+	    ...
+	    | otherwise = result
+
+	- Where Clause (Cannot be nested and can only be used inside a definition):
+		result where
+		pattern = result
+		...
+
+	- Let expression (Can be used anywhere and can be nested)
+	  let pattern = result
+	      ...
+	  in result
+
+	- Case expression
+		case expression of pattern -> result
+		                   ...
+
+  - NOTE: Haskell cares about indentation!!!
+-}
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -412,11 +509,11 @@ dotProduct (a, b) (c, d) = (a * c) + (b * d)
 
 {-
 	- Recursion requires base case
+	- A function that calls itself
 	- Generally the base case is above the recursive function 
 	- "where" : is bound to a surrounding syntactic construct, 
 	  like the pattern matching line of a function definition.
 -}
-
 
 count 100 = [] -- The base case
 count n = n : count (n + 1) -- The recursive descent 
@@ -438,4 +535,30 @@ fiblist2 n = go n 1 1
 
 -- Fib with evens is similar to test style questions
 
+-- Gets the length of a list of any type
+lengthRec :: [a] -> Int
+lengthRec [] = 1
+lengthRec (_:xs) = 1 + lengthRec xs
 
+-- Gets the summation of a list of numbers
+sumRec :: (Num a) => [a] -> a 
+sumRec [] = 0
+sumRec (x:xs) = x + sumRec xs
+
+-- Takes the product summation of the list of numbers
+productRec :: (Num a) => [a] -> a 
+productRec [] = 1
+productRec (x:xs) = x * productRec xs
+
+-- Finds the largest value in the list recursively
+maxRec :: (Ord a) => [a] -> a 
+maxRec [x] = x
+maxRec (x:xs)
+       | x > mx     = x -- mx is max
+       | otherwise  = mx
+       where mx = maxRec xs
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------
+
+-- Haskell 6a: Higher order functions
+-- https://www.youtube.com/watch?v=XKUsGSjnITc&list=PLS6urCrsYES24Fwzg5-Uga1QEbNm9kiU_&index=10
