@@ -257,6 +257,13 @@ numbers = [4, 8, 15, 16, 23, 42]
 -- List Comprehensions in Haskell
 
 {-
+	Basic setup!!!
+
+	func x = [output expression | input1, input2, predicate1, predicate2]
+
+-}
+
+{-
 	- We can use list comprehensions on strings as well
 	- List comprehension works mathematically as well
 	- List comprehension is broken up into 3 parts:
@@ -396,7 +403,104 @@ dotProduct (a, b) (c, d) = (a * c) + (b * d)
 -- ----------------------------------------------------------------------------------------------------------------------------------------
 
 -- Function Syntax in Haskell
--- https://www.youtube.com/watch?v=vuT8ts_neZw&list=PLS6urCrsYES24Fwzg5-Uga1QEbNm9kiU_&index=8
+{-
+	- The "=>" symbol means it takes in the following parameters
+	- The "->" symbol represents the return type  
+-}
+
+-- This is a recursive function that checks if a list is in increasing order 
+increasing1 :: (Ord a) => [a] -> Bool
+increasing1 xs = if xs == []
+  then True
+  else if tail xs == []
+    then True
+    else if head xs <= head (tail xs)
+      then increasing1 (tail xs)
+      else False
+
+-- This is the same as the previous function but uses Haskell's pattern matching
+increasing2 :: (Ord a) => [a] -> Bool
+increasing2 [] = True -- Empty list is increasing
+increasing2 [x] = True -- One item is increasing
+increasing2 (x : y : ys) = x <= y && increasing2 (y : ys)
+{-
+	x - 1st number
+	y - 2nd number
+	ys - rest of the list
+	The list is increasing if the first number is less than the second number and then it recursively checks continously
+-} 
+
+-- Takes a string and returns a string with no vowels
+noVowels1 :: [Char] -> [Char]
+noVowels1 word = if word == ""
+  then ""
+  else if head word `elem` "aeiouAEIOU"
+    then noVowels1 (tail word)
+    else (head word) : noVowels1 (tail word)
+
+-- Same as previous noVowels but using pattern matching and guards
+noVowels2 :: [Char] -> [Char]
+noVowels2 "" = ""
+noVowels2 (x : xs)
+  | x `elem` "aeiouAEIOU" = noVowels2 xs
+  | otherwise = x : noVowels2 xs
+
+-- This function calls out an alert at a certain time
+watch1 :: Int -> [Char]
+watch1 n = if n == 7
+  then "7 o'clock and ... SHARKNADO!"
+  else show n ++ " o'clock and all is well."
+-- show is kind of like a print statement 
+
+-- Same as watch1 but with pattern matching
+watch2 :: Int -> [Char]
+watch2 n = show n ++ " o'clock and " ++ message n
+  where message 7 = "... SHARKNADO!"
+        message _ = "all is well" -- Note: with where statements, the message needs to be spaced on same line
+
+-- Same as watch2 but with case statements (Switch statement)
+watch3 :: Int -> [Char]
+watch3 n = show n ++ " o'clock and " ++ case n of 7 -> "... SHARKNADO!"
+                                                  _ -> "all is well."
+
+-- Function that calculates the acceleration due to gravity
+gravity1 :: (Fractional a) => a -> a 
+gravity1 r = 6.674e-11 * 5.972e24 / (r ^ 2) --Haskell can handle exponential numbers
+
+-- Same as gravity1 but uses a "let" expression
+gravity2 :: (Fractional a) => a -> a 
+gravity2 r = let g = 6.674e-11
+                 earthMass = 5.972e24 -- Can chain and add more variables after the let statement
+             in g * earthMass / (r ^ 2)
+
+-- Some Templates
+{-
+	- Definition (Should be exhaustive. Good idea to have last pattern match everything):
+		pattern = result
+		...
+
+	- Guard expression (otherwise is not required but good to be exhaustive):
+	  pattern
+	    | expression = result
+	    ...
+	    | otherwise = result
+
+	- Where Clause (Cannot be nested and can only be used inside a definition):
+		result where
+		pattern = result
+		...
+
+	- Let expression (Can be used anywhere and can be nested)
+	  let pattern = result
+	      ...
+	  in result
+
+	- Case expression
+		case expression of pattern -> result
+		                   ...
+
+  - NOTE: Haskell cares about indentation!!!
+-}
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -412,17 +516,18 @@ dotProduct (a, b) (c, d) = (a * c) + (b * d)
 
 {-
 	- Recursion requires base case
+	- A function that calls itself
 	- Generally the base case is above the recursive function 
 	- "where" : is bound to a surrounding syntactic construct, 
 	  like the pattern matching line of a function definition.
+	- The double colon "::" means "has the type of"
 -}
-
 
 count 100 = [] -- The base case
 count n = n : count (n + 1) -- The recursive descent 
 
 -- Fibonacci
-
+fib :: (Eq a, Num a, Num p) => a -> p
 fib 0 = 0 -- base case 1
 fib 1 = 1 -- base case 2
 fib n = fib (n - 1) + fib (n - 2)
@@ -438,4 +543,148 @@ fiblist2 n = go n 1 1
 
 -- Fib with evens is similar to test style questions
 
+-- Gets the length of a list of any type
+lengthRec :: [a] -> Int
+lengthRec [] = 1
+lengthRec (_:xs) = 1 + lengthRec xs
 
+-- Gets the summation of a list of numbers
+sumRec :: (Num a) => [a] -> a 
+sumRec [] = 0
+sumRec (x:xs) = x + sumRec xs
+
+-- Takes the product summation of the list of numbers
+productRec :: (Num a) => [a] -> a 
+productRec [] = 1
+productRec (x:xs) = x * productRec xs
+
+-- Finds the largest value in the list recursively
+maxRec :: (Ord a) => [a] -> a 
+maxRec [x] = x
+maxRec (x:xs)
+       | x > mx     = x -- mx is max
+       | otherwise  = mx
+       where mx = maxRec xs
+
+-- Factorial function
+factorial :: (Eq p, Num p) => p -> p -- Remember this is a type definition
+factorial 0 = 1
+factorial n = n * factorial (n - 1)
+
+-- Example visual:
+{-
+	4! = 4 * fact 3
+			     3 * fact 2
+			     		 2 * fact 1
+			     		     1 * fact 0
+			     		         1
+-}
+
+-- Recursive sum of a list
+recursiveSum :: Num p => [p] -> p 
+recursiveSum [] = 0
+recursiveSum (x:xs) = x + recursiveSum xs
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------
+
+-- Recursion Practice Problems 
+
+{-3. Define a function, cubeOdds, which takes a list of intergers and returns that same
+list but with all the odd numbers cubed and the even numbers left untouched. Solve cubeOdds 
+with list comprehension and cubeOdds` with recursion.-}
+{- Tests:
+		input:            output:
+		[]            ->  [] 
+		[1,2,3,4,5]   ->  [1,2,27,4,125]
+		[2]           ->  [2]
+		[7]           ->  [343]
+-}
+
+-- List comprehension
+cubeOdds :: Integral a => [a] -> [a]
+cubeOdds ints = [if (odd x) then (x ^ 3) else x | x <- ints]
+
+isOddHelper1 x = if (odd x) then x ^ 3 else x
+
+isOddHelper2 x
+    | odd x = x ^ 3
+    | otherwise = x 
+
+-- Same but with helper function 
+cubeOddsWithHelper :: Integral a => [a] -> [a]
+cubeOddsWithHelper ints = [isOddHelper2 x | x <- ints]
+
+-- Recursion
+cubeOddsRec :: Integral a => [a] -> [a]
+cubeOddsRec [] = [] -- 99% of the time dealing with lists and recursion, the base case is the empty list 
+cubeOddsRec (x:xs) = (if odd x then x ^ 3 else x) : cubeOddsRec xs
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------
+
+{-4. Define a function, myMapper, which takes a function, funct, and a list, and returns a list
+where funct has been applied to each element in the list. solve myMapper with list comprehension
+and myMapper` with recursion-}
+{- Tests:
+    inputs:                                         output:
+    (+3)          []                             -> []
+    (+3)          [1,2,3]                        -> [4,5,6]
+    (++ "!")      ["ha", "hi", "hohoho"]         -> ["ha!", "hi!", "hohoho!"]
+    factorial     [0,1,3,8]                      -> [1,1,6,40320]
+    cubeOdds	    [[1..10], [2,4,6], [1,3,17]]   -> [[1,2,27,4,125,6,343,8,729,10], [2,4,6], [1,27,4913]]
+-}
+
+myMapper :: (t -> a) -> [t] -> [a]
+myMapper func list = [func x | x <- list]
+
+-- Recursion
+myMapperRec _ [] = []
+myMapperRec func (x:xs) = func x : myMapperRec func xs
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------
+
+{-5. Define a function, myFilter, which takes a predicate, pred, and a list, and returns a list
+containing every element from the original list that satisfies the predicate.
+Solve myFilter with a list comprehension and myFilterRec with recursion-}
+
+myFilter :: (a -> Bool) -> [a] -> [a]
+myFilter pred list = [x | x <- list, pred x]
+
+myFilterRec :: (a -> Bool) -> [a] -> [a]
+myFilterRec _ [] = []
+myFilterRec pred (x:xs)
+  | pred x = x : myFilterRec pred xs
+  | otherwise = myFilterRec pred xs
+
+-- Useful Higher order functions
+-- fold
+-- scan
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------
+
+{-6. Define a function, deleteNth, which takes a non-negative integer n, an element, elem,
+and a list, and returns a list with the nth occurence of elem deleted from the original list.
+Hints: Use recursion, think carefully about your base case, use conditionals-}
+
+deleteNth :: (Num t, Eq t, Eq a) => t -> a -> [a] -> [a]
+deleteNth _ _ [] = [] -- base case
+deleteNth 1 elem (x:xs) -- base case 
+    | elem == x = xs
+    | otherwise = x : deleteNth 1 elem xs
+deleteNth n elem (x:xs) -- recursive descent
+    | elem == x = x : deleteNth (n - 1) elem  xs
+    | otherwise = deleteNth n elem xs 
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------
+
+{-BONUS. Define a function, compose, which takes two lists of Binary Relations and returns
+a list of their Relational Compositions. A Binary Relation is a key-value pair held in a tuple.
+A Relatiuonal Composition returns the key of one pair with the value of a second pair, when value
+of the first corresponds to the key of the second. So (x,y) and (y,z) produce (x,z).
+Hint: Can be solved with a single list comprehension. Use pattern mathching on the tuples-}
+
+compose :: Eq a1 => [(a2, a1)] -> [(a1, b)] -> [(a2, b)]
+compose list1 list2 = [(x,z) | (x,y) <- list1, (y',z) <- list2, y == y']
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------
+-- Haskell 6a: Higher order functions
+-- https://www.youtube.com/watch?v=XKUsGSjnITc&list=PLS6urCrsYES24Fwzg5-Uga1QEbNm9kiU_&index=10
