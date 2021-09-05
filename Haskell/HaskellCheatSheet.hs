@@ -566,6 +566,7 @@ maxRec (x:xs)
        | otherwise  = mx
        where mx = maxRec xs
 
+<<<<<<< HEAD
 -- Factorial function
 factorial :: (Eq p, Num p) => p -> p -- Remember this is a type definition
 factorial 0 = 1
@@ -688,3 +689,4 @@ compose list1 list2 = [(x,z) | (x,y) <- list1, (y',z) <- list2, y == y']
 -- ----------------------------------------------------------------------------------------------------------------------------------------
 -- Haskell 6a: Higher order functions
 -- https://www.youtube.com/watch?v=XKUsGSjnITc&list=PLS6urCrsYES24Fwzg5-Uga1QEbNm9kiU_&index=10
+-- ----------------------------------------------------------------------------------------------------------------------------------------
